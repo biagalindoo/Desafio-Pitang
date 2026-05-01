@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  COLABORADOR
+  GESTOR
+  FINANCEIRO
+}
+
+enum ReimbursementStatus {
+  RASCUNHO
+  ENVIADO
+  APROVADO
+  REJEITADO
+  PAGO
+  CANCELADO
+}
+
+enum HistoryAction {
+  CREATED
+  UPDATED
+  SUBMITTED
+  APPROVED
+  REJECTED
+  PAID
+  CANCELED
+}
+
+model User {
+  id             String                  @id @default(cuid())
+  nome           String
+  email          String                  @unique
+  senha          String
+  perfil         Role
+  criadoEm       DateTime                @default(now())
+  atualizadoEm   DateTime                @updatedAt
+  solicitacoes   ReimbursementRequest[]  @relation("RequesterRequests")
+  historicos     RequestHistory[]
+
+  @@map("usuarios")
+}
+
+model Category {
+  id             String                  @id @default(cuid())
+  nome           String                  @unique
+  ativo          Boolean                 @default(true)
+  criadoEm       DateTime                @default(now())
+  atualizadoEm   DateTime                @updatedAt
+  solicitacoes   ReimbursementRequest[]
+
+  @@map("categorias")
+}
+
+model ReimbursementRequest {
+  id                     String                @id @default(cuid())
+  solicitanteId          String
+  categoriaId            String
+  descricao              String
+  valor                  Decimal
+  dataDespesa            DateTime
+  status                 ReimbursementStatus   @default(RASCUNHO)
+  justificativaRejeicao  String?
+  criadoEm               DateTime              @default(now())
+  atualizadoEm           DateTime              @updatedAt
+  solicitante            User                  @relation("RequesterRequests", fields: [solicitanteId], references: [id])
+  categoria              Category              @relation(fields: [categoriaId], references: [id])
+  anexos                 Attachment[]
+  historicos             RequestHistory[]
+
+  @@map("solicitacoes_reembolso")
+}
+
+model Attachment {
+  id             String                  @id @default(cuid())
+  solicitacaoId  String
+  nomeArquivo    String
+  urlArquivo     String
+  tipoArquivo    String
+  criadoEm       DateTime                @default(now())
+  solicitacao    ReimbursementRequest    @relation(fields: [solicitacaoId], references: [id])
+
+  @@map("anexos")
+}
+
+model RequestHistory {
+  id             String                  @id @default(cuid())
+  solicitacaoId  String
+  usuarioId      String
+  acao           HistoryAction
+  observacao     String
+  criadoEm       DateTime                @default(now())
+  solicitacao    ReimbursementRequest    @relation(fields: [solicitacaoId], references: [id])
+  usuario        User                    @relation(fields: [usuarioId], references: [id])
+
+  @@map("historicos_solicitacao")
+}
+
