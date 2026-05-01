@@ -19,59 +19,59 @@ const reembolsosController = new ReembolsosController();
 
 reembolsosRoutes.use(authenticate);
 
-reembolsosRoutes.get("/", asyncHandler(reembolsosController.index));
+reembolsosRoutes.get("/", asyncHandler(reembolsosController.index.bind(reembolsosController)));
 reembolsosRoutes.post(
   "/",
   validate({ body: createReembolsoSchema }),
-  asyncHandler(reembolsosController.create)
+  asyncHandler(reembolsosController.create.bind(reembolsosController))
 );
 reembolsosRoutes.put(
   "/:id",
   validate({ params: reembolsoParamsSchema, body: updateReembolsoSchema }),
-  asyncHandler(reembolsosController.update)
+  asyncHandler(reembolsosController.update.bind(reembolsosController))
 );
 reembolsosRoutes.post(
   "/:id/cancelar",
   validate({ params: reembolsoParamsSchema }),
-  asyncHandler(reembolsosController.cancel)
+  asyncHandler(reembolsosController.cancel.bind(reembolsosController))
 );
 reembolsosRoutes.post(
   "/:id/enviar",
   validate({ params: reembolsoParamsSchema }),
-  asyncHandler(reembolsosController.submit)
+  asyncHandler(reembolsosController.submit.bind(reembolsosController))
 );
 reembolsosRoutes.post(
   "/:id/aprovar",
   validate({ params: reembolsoParamsSchema }),
-  asyncHandler(reembolsosController.approve)
+  asyncHandler(reembolsosController.approve.bind(reembolsosController))
 );
 reembolsosRoutes.post(
   "/:id/rejeitar",
   validate({ params: reembolsoParamsSchema, body: rejectReembolsoSchema }),
-  asyncHandler(reembolsosController.reject)
+  asyncHandler(reembolsosController.reject.bind(reembolsosController))
 );
 reembolsosRoutes.post(
   "/:id/pagar",
   validate({ params: reembolsoParamsSchema }),
-  asyncHandler(reembolsosController.pay)
+  asyncHandler(reembolsosController.pay.bind(reembolsosController))
 );
 reembolsosRoutes.get(
   "/:id/historico",
   validate({ params: reembolsoParamsSchema }),
-  asyncHandler(reembolsosController.history)
+  asyncHandler(reembolsosController.history.bind(reembolsosController))
 );
 reembolsosRoutes.get(
   "/:id/anexos",
   validate({ params: reembolsoParamsSchema }),
-  asyncHandler(anexosController.index)
+  asyncHandler(anexosController.index.bind(anexosController))
 );
 reembolsosRoutes.post(
   "/:id/anexos",
   validate({ params: reembolsoParamsSchema, body: createAnexoSchema }),
-  asyncHandler(anexosController.create)
+  asyncHandler(anexosController.create.bind(anexosController))
 );
 reembolsosRoutes.get(
   "/:id",
   validate({ params: reembolsoParamsSchema }),
-  asyncHandler(reembolsosController.show)
+  asyncHandler(reembolsosController.show.bind(reembolsosController))
 );
