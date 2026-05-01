@@ -31,6 +31,11 @@ reembolsosRoutes.post(
   validate({ params: reembolsoParamsSchema }),
   asyncHandler(reembolsosController.cancel)
 );
+reembolsosRoutes.post(
+  "/:id/enviar",
+  validate({ params: reembolsoParamsSchema }),
+  asyncHandler(reembolsosController.submit)
+);
 reembolsosRoutes.get(
   "/:id",
   validate({ params: reembolsoParamsSchema }),

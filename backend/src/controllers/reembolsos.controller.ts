@@ -259,6 +259,60 @@ export class ReembolsosController {
     return response.status(200).json(solicitacaoCancelada);
   }
 
+  async submit(request: Request, response: Response) {
+    const user = request.user;
+    const id = String(request.params.id);
+
+    if (!user) {
+      throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
+    }
+
+    if (user.perfil !== Roles.COLABORADOR) {
+      throw new AppError("Apenas colaboradores podem enviar solicitacoes", 403, "Forbidden");
+    }
+
+    const solicitacao = await prisma.solicitacaoReembolso.findUnique({
+      where: { id }
+    });
+
+    if (!solicitacao) {
+      throw new AppError("Solicitacao nao encontrada", 404, "Not Found");
+    }
+
+    if (solicitacao.solicitanteId !== user.id) {
+      throw new AppError("Usuario sem permissao", 403, "Forbidden");
+    }
+
+    if (solicitacao.status !== StatusReembolso.RASCUNHO) {
+      throw new AppError("Apenas solicitacoes em rascunho podem ser enviadas");
+    }
+
+    const solicitacaoEnviada = await prisma.$transaction(async (transaction) => {
+      const submitted = await transaction.solicitacaoReembolso.update({
+        where: { id },
+        data: {
+          status: StatusReembolso.ENVIADO
+        },
+        include: {
+          categoria: true
+        }
+      });
+
+      await transaction.requestHistory.create({
+        data: {
+          solicitacaoId: id,
+          usuarioId: user.id,
+          acao: "SUBMITTED",
+          observacao: "Solicitacao enviada para analise"
+        }
+      });
+
+      return submitted;
+    });
+
+    return response.status(200).json(solicitacaoEnviada);
+  }
+
   private getListWhereByRole(userId: string, role: string) {
     if (role === Roles.ADMIN) {
       return undefined;
