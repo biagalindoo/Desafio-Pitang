@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { AnexosController } from "../controllers/anexos.controller";
 import { ReembolsosController } from "../controllers/reembolsos.controller";
 import { authenticate } from "../middlewares/authenticate";
 import { validate } from "../middlewares/validate";
@@ -8,10 +9,12 @@ import {
   rejectReembolsoSchema,
   updateReembolsoSchema
 } from "../schemas/reembolso.schemas";
+import { createAnexoSchema } from "../schemas/anexo.schemas";
 import { asyncHandler } from "../utils/async-handler";
 
 export const reembolsosRoutes = Router();
 
+const anexosController = new AnexosController();
 const reembolsosController = new ReembolsosController();
 
 reembolsosRoutes.use(authenticate);
@@ -56,6 +59,16 @@ reembolsosRoutes.get(
   "/:id/historico",
   validate({ params: reembolsoParamsSchema }),
   asyncHandler(reembolsosController.history)
+);
+reembolsosRoutes.get(
+  "/:id/anexos",
+  validate({ params: reembolsoParamsSchema }),
+  asyncHandler(anexosController.index)
+);
+reembolsosRoutes.post(
+  "/:id/anexos",
+  validate({ params: reembolsoParamsSchema, body: createAnexoSchema }),
+  asyncHandler(anexosController.create)
 );
 reembolsosRoutes.get(
   "/:id",
