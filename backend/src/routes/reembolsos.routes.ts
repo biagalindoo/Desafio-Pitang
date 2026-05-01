@@ -5,6 +5,7 @@ import { validate } from "../middlewares/validate";
 import {
   createReembolsoSchema,
   reembolsoParamsSchema,
+  rejectReembolsoSchema,
   updateReembolsoSchema
 } from "../schemas/reembolso.schemas";
 import { asyncHandler } from "../utils/async-handler";
@@ -35,6 +36,16 @@ reembolsosRoutes.post(
   "/:id/enviar",
   validate({ params: reembolsoParamsSchema }),
   asyncHandler(reembolsosController.submit)
+);
+reembolsosRoutes.post(
+  "/:id/aprovar",
+  validate({ params: reembolsoParamsSchema }),
+  asyncHandler(reembolsosController.approve)
+);
+reembolsosRoutes.post(
+  "/:id/rejeitar",
+  validate({ params: reembolsoParamsSchema, body: rejectReembolsoSchema }),
+  asyncHandler(reembolsosController.reject)
 );
 reembolsosRoutes.get(
   "/:id",

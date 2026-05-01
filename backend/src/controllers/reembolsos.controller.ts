@@ -313,6 +313,109 @@ export class ReembolsosController {
     return response.status(200).json(solicitacaoEnviada);
   }
 
+  async approve(request: Request, response: Response) {
+    const user = request.user;
+    const id = String(request.params.id);
+
+    if (!user) {
+      throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
+    }
+
+    if (user.perfil !== Roles.GESTOR) {
+      throw new AppError("Apenas gestores podem aprovar solicitacoes", 403, "Forbidden");
+    }
+
+    const solicitacao = await prisma.solicitacaoReembolso.findUnique({
+      where: { id }
+    });
+
+    if (!solicitacao) {
+      throw new AppError("Solicitacao nao encontrada", 404, "Not Found");
+    }
+
+    if (solicitacao.status !== StatusReembolso.ENVIADO) {
+      throw new AppError("Apenas solicitacoes enviadas podem ser aprovadas");
+    }
+
+    const solicitacaoAprovada = await prisma.$transaction(async (transaction) => {
+      const approved = await transaction.solicitacaoReembolso.update({
+        where: { id },
+        data: {
+          status: StatusReembolso.APROVADO,
+          justificativaRejeicao: null
+        },
+        include: {
+          categoria: true
+        }
+      });
+
+      await transaction.requestHistory.create({
+        data: {
+          solicitacaoId: id,
+          usuarioId: user.id,
+          acao: "APPROVED",
+          observacao: "Solicitacao aprovada pelo gestor"
+        }
+      });
+
+      return approved;
+    });
+
+    return response.status(200).json(solicitacaoAprovada);
+  }
+
+  async reject(request: Request, response: Response) {
+    const user = request.user;
+    const id = String(request.params.id);
+    const { justificativaRejeicao } = request.body;
+
+    if (!user) {
+      throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
+    }
+
+    if (user.perfil !== Roles.GESTOR) {
+      throw new AppError("Apenas gestores podem rejeitar solicitacoes", 403, "Forbidden");
+    }
+
+    const solicitacao = await prisma.solicitacaoReembolso.findUnique({
+      where: { id }
+    });
+
+    if (!solicitacao) {
+      throw new AppError("Solicitacao nao encontrada", 404, "Not Found");
+    }
+
+    if (solicitacao.status !== StatusReembolso.ENVIADO) {
+      throw new AppError("Apenas solicitacoes enviadas podem ser rejeitadas");
+    }
+
+    const solicitacaoRejeitada = await prisma.$transaction(async (transaction) => {
+      const rejected = await transaction.solicitacaoReembolso.update({
+        where: { id },
+        data: {
+          status: StatusReembolso.REJEITADO,
+          justificativaRejeicao
+        },
+        include: {
+          categoria: true
+        }
+      });
+
+      await transaction.requestHistory.create({
+        data: {
+          solicitacaoId: id,
+          usuarioId: user.id,
+          acao: "REJECTED",
+          observacao: justificativaRejeicao
+        }
+      });
+
+      return rejected;
+    });
+
+    return response.status(200).json(solicitacaoRejeitada);
+  }
+
   private getListWhereByRole(userId: string, role: string) {
     if (role === Roles.ADMIN) {
       return undefined;

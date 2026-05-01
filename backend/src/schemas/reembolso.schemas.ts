@@ -35,3 +35,10 @@ export const updateReembolsoSchema = z
       message: "Informe ao menos um campo para atualizar"
     }
   );
+
+export const rejectReembolsoSchema = z.object({
+  justificativaRejeicao: z
+    .string()
+    .trim()
+    .min(3, "Justificativa de rejeicao obrigatoria")
+});
