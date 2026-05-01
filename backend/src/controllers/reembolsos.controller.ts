@@ -416,6 +416,56 @@ export class ReembolsosController {
     return response.status(200).json(solicitacaoRejeitada);
   }
 
+  async pay(request: Request, response: Response) {
+    const user = request.user;
+    const id = String(request.params.id);
+
+    if (!user) {
+      throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
+    }
+
+    if (user.perfil !== Roles.FINANCEIRO) {
+      throw new AppError("Apenas o financeiro pode marcar solicitacoes como pagas", 403, "Forbidden");
+    }
+
+    const solicitacao = await prisma.solicitacaoReembolso.findUnique({
+      where: { id }
+    });
+
+    if (!solicitacao) {
+      throw new AppError("Solicitacao nao encontrada", 404, "Not Found");
+    }
+
+    if (solicitacao.status !== StatusReembolso.APROVADO) {
+      throw new AppError("Apenas solicitacoes aprovadas podem ser pagas");
+    }
+
+    const solicitacaoPaga = await prisma.$transaction(async (transaction) => {
+      const paid = await transaction.solicitacaoReembolso.update({
+        where: { id },
+        data: {
+          status: StatusReembolso.PAGO
+        },
+        include: {
+          categoria: true
+        }
+      });
+
+      await transaction.requestHistory.create({
+        data: {
+          solicitacaoId: id,
+          usuarioId: user.id,
+          acao: "PAID",
+          observacao: "Pagamento realizado pelo financeiro"
+        }
+      });
+
+      return paid;
+    });
+
+    return response.status(200).json(solicitacaoPaga);
+  }
+
   private getListWhereByRole(userId: string, role: string) {
     if (role === Roles.ADMIN) {
       return undefined;

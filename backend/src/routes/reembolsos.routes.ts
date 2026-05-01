@@ -47,6 +47,11 @@ reembolsosRoutes.post(
   validate({ params: reembolsoParamsSchema, body: rejectReembolsoSchema }),
   asyncHandler(reembolsosController.reject)
 );
+reembolsosRoutes.post(
+  "/:id/pagar",
+  validate({ params: reembolsoParamsSchema }),
+  asyncHandler(reembolsosController.pay)
+);
 reembolsosRoutes.get(
   "/:id",
   validate({ params: reembolsoParamsSchema }),
