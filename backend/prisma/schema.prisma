@@ -7,38 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  COLABORADOR
-  GESTOR
-  FINANCEIRO
-}
-
-enum ReimbursementStatus {
-  RASCUNHO
-  ENVIADO
-  APROVADO
-  REJEITADO
-  PAGO
-  CANCELADO
-}
-
-enum HistoryAction {
-  CREATED
-  UPDATED
-  SUBMITTED
-  APPROVED
-  REJECTED
-  PAID
-  CANCELED
-}
-
 model User {
   id             String                  @id @default(cuid())
   nome           String
   email          String                  @unique
   senha          String
-  perfil         Role
+  perfil         String
   criadoEm       DateTime                @default(now())
   atualizadoEm   DateTime                @updatedAt
   solicitacoes   ReimbursementRequest[]  @relation("RequesterRequests")
@@ -65,7 +39,7 @@ model ReimbursementRequest {
   descricao              String
   valor                  Decimal
   dataDespesa            DateTime
-  status                 ReimbursementStatus   @default(RASCUNHO)
+  status                 String                @default("RASCUNHO")
   justificativaRejeicao  String?
   criadoEm               DateTime              @default(now())
   atualizadoEm           DateTime              @updatedAt
@@ -93,7 +67,7 @@ model RequestHistory {
   id             String                  @id @default(cuid())
   solicitacaoId  String
   usuarioId      String
-  acao           HistoryAction
+  acao           String
   observacao     String
   criadoEm       DateTime                @default(now())
   solicitacao    ReimbursementRequest    @relation(fields: [solicitacaoId], references: [id])
@@ -101,4 +75,3 @@ model RequestHistory {
 
   @@map("historicos_solicitacao")
 }
-
