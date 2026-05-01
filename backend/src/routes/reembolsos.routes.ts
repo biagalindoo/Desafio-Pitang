@@ -4,7 +4,8 @@ import { authenticate } from "../middlewares/authenticate";
 import { validate } from "../middlewares/validate";
 import {
   createReembolsoSchema,
-  reembolsoParamsSchema
+  reembolsoParamsSchema,
+  updateReembolsoSchema
 } from "../schemas/reembolso.schemas";
 import { asyncHandler } from "../utils/async-handler";
 
@@ -19,6 +20,16 @@ reembolsosRoutes.post(
   "/",
   validate({ body: createReembolsoSchema }),
   asyncHandler(reembolsosController.create)
+);
+reembolsosRoutes.put(
+  "/:id",
+  validate({ params: reembolsoParamsSchema, body: updateReembolsoSchema }),
+  asyncHandler(reembolsosController.update)
+);
+reembolsosRoutes.post(
+  "/:id/cancelar",
+  validate({ params: reembolsoParamsSchema }),
+  asyncHandler(reembolsosController.cancel)
 );
 reembolsosRoutes.get(
   "/:id",

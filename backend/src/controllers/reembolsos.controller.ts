@@ -136,6 +136,129 @@ export class ReembolsosController {
     return response.status(200).json(solicitacao);
   }
 
+  async update(request: Request, response: Response) {
+    const user = request.user;
+    const id = String(request.params.id);
+
+    if (!user) {
+      throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
+    }
+
+    if (user.perfil !== Roles.COLABORADOR) {
+      throw new AppError("Apenas colaboradores podem editar solicitacoes", 403, "Forbidden");
+    }
+
+    const solicitacao = await prisma.solicitacaoReembolso.findUnique({
+      where: { id }
+    });
+
+    if (!solicitacao) {
+      throw new AppError("Solicitacao nao encontrada", 404, "Not Found");
+    }
+
+    if (solicitacao.solicitanteId !== user.id) {
+      throw new AppError("Usuario sem permissao", 403, "Forbidden");
+    }
+
+    if (solicitacao.status !== StatusReembolso.RASCUNHO) {
+      throw new AppError("Apenas solicitacoes em rascunho podem ser editadas");
+    }
+
+    const { categoriaId, descricao, valor, dataDespesa } = request.body;
+
+    if (categoriaId) {
+      const category = await prisma.category.findUnique({
+        where: { id: categoriaId }
+      });
+
+      if (!category || !category.ativo) {
+        throw new AppError("Categoria nao encontrada ou inativa");
+      }
+    }
+
+    const solicitacaoAtualizada = await prisma.$transaction(async (transaction) => {
+      const updated = await transaction.solicitacaoReembolso.update({
+        where: { id },
+        data: {
+          categoriaId,
+          descricao,
+          valor,
+          dataDespesa: dataDespesa ? dayjs(dataDespesa).toDate() : undefined
+        },
+        include: {
+          categoria: true
+        }
+      });
+
+      await transaction.requestHistory.create({
+        data: {
+          solicitacaoId: id,
+          usuarioId: user.id,
+          acao: "UPDATED",
+          observacao: "Solicitacao de reembolso atualizada"
+        }
+      });
+
+      return updated;
+    });
+
+    return response.status(200).json(solicitacaoAtualizada);
+  }
+
+  async cancel(request: Request, response: Response) {
+    const user = request.user;
+    const id = String(request.params.id);
+
+    if (!user) {
+      throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
+    }
+
+    if (user.perfil !== Roles.COLABORADOR) {
+      throw new AppError("Apenas colaboradores podem cancelar solicitacoes", 403, "Forbidden");
+    }
+
+    const solicitacao = await prisma.solicitacaoReembolso.findUnique({
+      where: { id }
+    });
+
+    if (!solicitacao) {
+      throw new AppError("Solicitacao nao encontrada", 404, "Not Found");
+    }
+
+    if (solicitacao.solicitanteId !== user.id) {
+      throw new AppError("Usuario sem permissao", 403, "Forbidden");
+    }
+
+    if (solicitacao.status !== StatusReembolso.RASCUNHO) {
+      throw new AppError("Apenas solicitacoes em rascunho podem ser canceladas");
+    }
+
+    const solicitacaoCancelada = await prisma.$transaction(async (transaction) => {
+      const canceled = await transaction.solicitacaoReembolso.update({
+        where: { id },
+        data: {
+          status: StatusReembolso.CANCELADO
+        },
+        include: {
+          categoria: true
+        }
+      });
+
+      await transaction.requestHistory.create({
+        data: {
+          solicitacaoId: id,
+          usuarioId: user.id,
+          acao: "CANCELED",
+          observacao: "Solicitacao de reembolso cancelada"
+        }
+      });
+
+      return canceled;
+    });
+
+    return response.status(200).json(solicitacaoCancelada);
+  }
+
   private getListWhereByRole(userId: string, role: string) {
     if (role === Roles.ADMIN) {
       return undefined;
