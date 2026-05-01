@@ -53,6 +53,11 @@ reembolsosRoutes.post(
   asyncHandler(reembolsosController.pay)
 );
 reembolsosRoutes.get(
+  "/:id/historico",
+  validate({ params: reembolsoParamsSchema }),
+  asyncHandler(reembolsosController.history)
+);
+reembolsosRoutes.get(
   "/:id",
   validate({ params: reembolsoParamsSchema }),
   asyncHandler(reembolsosController.show)

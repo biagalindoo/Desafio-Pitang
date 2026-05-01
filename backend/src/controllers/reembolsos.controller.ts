@@ -466,6 +466,52 @@ export class ReembolsosController {
     return response.status(200).json(solicitacaoPaga);
   }
 
+  async history(request: Request, response: Response) {
+    const user = request.user;
+    const id = String(request.params.id);
+
+    if (!user) {
+      throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
+    }
+
+    const solicitacao = await prisma.solicitacaoReembolso.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        solicitanteId: true
+      }
+    });
+
+    if (!solicitacao) {
+      throw new AppError("Solicitacao nao encontrada", 404, "Not Found");
+    }
+
+    if (user.perfil === Roles.COLABORADOR && solicitacao.solicitanteId !== user.id) {
+      throw new AppError("Usuario sem permissao", 403, "Forbidden");
+    }
+
+    const historico = await prisma.requestHistory.findMany({
+      where: {
+        solicitacaoId: id
+      },
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nome: true,
+            email: true,
+            perfil: true
+          }
+        }
+      },
+      orderBy: {
+        criadoEm: "asc"
+      }
+    });
+
+    return response.status(200).json(historico);
+  }
+
   private getListWhereByRole(userId: string, role: string) {
     if (role === Roles.ADMIN) {
       return undefined;
