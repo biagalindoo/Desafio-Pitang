@@ -1,11 +1,9 @@
-import type { Config } from "jest";
-
-const config: Config = {
+/** @type {import('jest').Config} */
+module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   roots: ["<rootDir>/src", "<rootDir>/tests"],
+  setupFiles: ["<rootDir>/tests/setup-env.ts"],
   clearMocks: true
 };
-
-export default config;
 
