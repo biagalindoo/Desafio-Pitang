@@ -7,7 +7,7 @@ export const Roles = {
 
 export type Role = (typeof Roles)[keyof typeof Roles];
 
-export const ReimbursementStatuses = {
+export const StatusReembolso = {
   RASCUNHO: "RASCUNHO",
   ENVIADO: "ENVIADO",
   APROVADO: "APROVADO",
@@ -16,8 +16,8 @@ export const ReimbursementStatuses = {
   CANCELADO: "CANCELADO"
 } as const;
 
-export type ReimbursementStatus =
-  (typeof ReimbursementStatuses)[keyof typeof ReimbursementStatuses];
+export type StatusReembolsoTipo =
+  (typeof StatusReembolso)[keyof typeof StatusReembolso];
 
 export const HistoryActions = {
   CREATED: "CREATED",
@@ -30,4 +30,3 @@ export const HistoryActions = {
 } as const;
 
 export type HistoryAction = (typeof HistoryActions)[keyof typeof HistoryActions];
-

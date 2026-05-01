@@ -15,7 +15,7 @@ model User {
   perfil         String
   criadoEm       DateTime                @default(now())
   atualizadoEm   DateTime                @updatedAt
-  solicitacoes   ReimbursementRequest[]  @relation("RequesterRequests")
+  solicitacoes   SolicitacaoReembolso[]  @relation("RequesterRequests")
   historicos     RequestHistory[]
 
   @@map("usuarios")
@@ -27,12 +27,12 @@ model Category {
   ativo          Boolean                 @default(true)
   criadoEm       DateTime                @default(now())
   atualizadoEm   DateTime                @updatedAt
-  solicitacoes   ReimbursementRequest[]
+  solicitacoes   SolicitacaoReembolso[]
 
   @@map("categorias")
 }
 
-model ReimbursementRequest {
+model SolicitacaoReembolso {
   id                     String                @id @default(cuid())
   solicitanteId          String
   categoriaId            String
@@ -58,7 +58,7 @@ model Attachment {
   urlArquivo     String
   tipoArquivo    String
   criadoEm       DateTime                @default(now())
-  solicitacao    ReimbursementRequest    @relation(fields: [solicitacaoId], references: [id])
+  solicitacao    SolicitacaoReembolso    @relation(fields: [solicitacaoId], references: [id])
 
   @@map("anexos")
 }
@@ -70,7 +70,7 @@ model RequestHistory {
   acao           String
   observacao     String
   criadoEm       DateTime                @default(now())
-  solicitacao    ReimbursementRequest    @relation(fields: [solicitacaoId], references: [id])
+  solicitacao    SolicitacaoReembolso    @relation(fields: [solicitacaoId], references: [id])
   usuario        User                    @relation(fields: [usuarioId], references: [id])
 
   @@map("historicos_solicitacao")
