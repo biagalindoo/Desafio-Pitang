@@ -4,4 +4,5 @@ coverage/
 .env
 .DS_Store
 *.log
-
+*.db
+*.db-journal
