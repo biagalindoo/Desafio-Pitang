@@ -133,6 +133,9 @@ export function ReembolsoDetailPage() {
                 <div className="actions-row">
                   {canSubmitOrCancel && (
                     <>
+                      <Link className="button-link secondary-button" to={`/reembolsos/${id}/editar`}>
+                        Editar
+                      </Link>
                       <button
                         type="button"
                         onClick={() => executeAction("enviar")}
@@ -271,4 +274,3 @@ export function ReembolsoDetailPage() {
     </main>
   );
 }
-
