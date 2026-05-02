@@ -27,6 +27,10 @@ button {
   cursor: pointer;
 }
 
+.secondary-button {
+  background: #344054;
+}
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.7;
@@ -232,6 +236,30 @@ tr:last-child td {
 .detail-section h2 {
   margin: 0 0 16px;
   font-size: 20px;
+}
+
+.actions-section {
+  margin-top: 20px;
+}
+
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.reject-box {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 360px);
+}
+
+.reject-box textarea {
+  width: 100%;
+  border: 1px solid #cfd4dc;
+  padding: 10px 12px;
+  resize: vertical;
 }
 
 .description-list {

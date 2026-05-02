@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../api/client";
+import { useAuth } from "../contexts/AuthContext";
 import { formatCurrency, formatDate } from "../utils/formatters";
 
 type Anexo = {
@@ -41,26 +42,62 @@ type ReembolsoDetail = {
   historicos: Historico[];
 };
 
+type ReembolsoAction = "enviar" | "cancelar" | "aprovar" | "rejeitar" | "pagar";
+
 export function ReembolsoDetailPage() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [reembolso, setReembolso] = useState<ReembolsoDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [justificativaRejeicao, setJustificativaRejeicao] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  async function loadReembolso() {
+    try {
+      const response = await api.get<ReembolsoDetail>(`/reembolsos/${id}`);
+      setReembolso(response.data);
+    } catch {
+      setError("Nao foi possivel carregar a solicitacao.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function loadReembolso() {
-      try {
-        const response = await api.get<ReembolsoDetail>(`/reembolsos/${id}`);
-        setReembolso(response.data);
-      } catch {
-        setError("Nao foi possivel carregar a solicitacao.");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     loadReembolso();
   }, [id]);
+
+  async function executeAction(action: ReembolsoAction) {
+    setError("");
+    setSuccess("");
+    setIsSubmitting(true);
+
+    try {
+      const payload =
+        action === "rejeitar"
+          ? {
+              justificativaRejeicao
+            }
+          : undefined;
+
+      await api.post(`/reembolsos/${id}/${action}`, payload);
+      setSuccess("Acao realizada com sucesso.");
+      setJustificativaRejeicao("");
+      await loadReembolso();
+    } catch {
+      setError("Nao foi possivel realizar a acao.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  const isOwner = reembolso?.solicitante.email === user?.email;
+  const canSubmitOrCancel =
+    user?.perfil === "COLABORADOR" && isOwner && reembolso?.status === "RASCUNHO";
+  const canApproveOrReject = user?.perfil === "GESTOR" && reembolso?.status === "ENVIADO";
+  const canPay = user?.perfil === "FINANCEIRO" && reembolso?.status === "APROVADO";
 
   return (
     <main className="app-shell">
@@ -82,12 +119,76 @@ export function ReembolsoDetailPage() {
               <div>
                 <h1>{reembolso.descricao}</h1>
                 <p className="muted">
-                  {reembolso.categoria.nome} • {formatCurrency(reembolso.valor)} •{" "}
+                  {reembolso.categoria.nome} - {formatCurrency(reembolso.valor)} -{" "}
                   {formatDate(reembolso.dataDespesa)}
                 </p>
               </div>
               <span className="status-badge">{reembolso.status}</span>
             </div>
+            {success && <p className="feedback success">{success}</p>}
+
+            {(canSubmitOrCancel || canApproveOrReject || canPay) && (
+              <section className="detail-section actions-section">
+                <h2>Acoes disponiveis</h2>
+                <div className="actions-row">
+                  {canSubmitOrCancel && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => executeAction("enviar")}
+                        disabled={isSubmitting}
+                      >
+                        Enviar para analise
+                      </button>
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={() => executeAction("cancelar")}
+                        disabled={isSubmitting}
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  )}
+                  {canApproveOrReject && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => executeAction("aprovar")}
+                        disabled={isSubmitting}
+                      >
+                        Aprovar
+                      </button>
+                      <div className="reject-box">
+                        <textarea
+                          value={justificativaRejeicao}
+                          onChange={(event) => setJustificativaRejeicao(event.target.value)}
+                          placeholder="Justificativa da rejeicao"
+                          rows={3}
+                        />
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          onClick={() => executeAction("rejeitar")}
+                          disabled={isSubmitting || justificativaRejeicao.trim().length < 3}
+                        >
+                          Rejeitar
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  {canPay && (
+                    <button
+                      type="button"
+                      onClick={() => executeAction("pagar")}
+                      disabled={isSubmitting}
+                    >
+                      Marcar como pago
+                    </button>
+                  )}
+                </div>
+              </section>
+            )}
 
             <div className="detail-grid">
               <section className="detail-section">
