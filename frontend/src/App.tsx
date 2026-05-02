@@ -6,6 +6,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { NewReembolsoPage } from "./pages/NewReembolsoPage";
 import { ReembolsoDetailPage } from "./pages/ReembolsoDetailPage";
 import { EditReembolsoPage } from "./pages/EditReembolsoPage";
+import { CategoriesPage } from "./pages/CategoriesPage";
 
 export function App() {
   return (
@@ -42,6 +43,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <EditReembolsoPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/categorias"
+        element={
+          <ProtectedRoute>
+            <CategoriesPage />
           </ProtectedRoute>
         }
       />

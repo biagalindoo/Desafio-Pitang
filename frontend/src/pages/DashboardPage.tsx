@@ -63,6 +63,11 @@ export function DashboardPage() {
               Nova solicitacao
             </Link>
           )}
+          {user?.perfil === "ADMIN" && (
+            <Link className="button-link" to="/categorias">
+              Gerenciar categorias
+            </Link>
+          )}
         </div>
         {isLoading && <p className="state-message">Carregando solicitacoes...</p>}
         {error && <p className="feedback error">{error}</p>}

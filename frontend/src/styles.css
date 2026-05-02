@@ -169,6 +169,17 @@ a {
   border: 1px solid #e7e9ee;
 }
 
+.inline-form {
+  max-width: 680px;
+}
+
+.form-actions,
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .state-message {
   margin: 24px 0 0;
   color: #5f6673;
