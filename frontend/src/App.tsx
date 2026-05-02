@@ -4,6 +4,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { NewReembolsoPage } from "./pages/NewReembolsoPage";
+import { ReembolsoDetailPage } from "./pages/ReembolsoDetailPage";
 
 export function App() {
   return (
@@ -24,6 +25,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <NewReembolsoPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reembolsos/:id"
+        element={
+          <ProtectedRoute>
+            <ReembolsoDetailPage />
           </ProtectedRoute>
         }
       />

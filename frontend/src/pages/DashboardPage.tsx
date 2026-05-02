@@ -80,6 +80,7 @@ export function DashboardPage() {
                   <th>Data</th>
                   <th>Status</th>
                   <th>Solicitante</th>
+                  <th>Acoes</th>
                 </tr>
               </thead>
               <tbody>
@@ -93,6 +94,9 @@ export function DashboardPage() {
                       <span className="status-badge">{reembolso.status}</span>
                     </td>
                     <td>{reembolso.solicitante?.nome ?? user?.nome}</td>
+                    <td>
+                      <Link to={`/reembolsos/${reembolso.id}`}>Detalhar</Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
