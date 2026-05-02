@@ -1,0 +1,116 @@
+:root {
+  color: #111111;
+  background: #f6f7f9;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  background: #c8102e;
+  color: white;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+a {
+  color: #c8102e;
+  font-weight: 700;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-panel {
+  width: min(100%, 420px);
+  background: white;
+  border: 1px solid #e7e9ee;
+  padding: 28px;
+}
+
+.auth-panel h1,
+.content h1 {
+  margin: 0 0 20px;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.form input {
+  border: 1px solid #cfd4dc;
+  padding: 10px 12px;
+}
+
+.feedback {
+  margin: 0;
+  font-weight: 700;
+}
+
+.error {
+  color: #b42318;
+}
+
+.muted {
+  color: #5f6673;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: #111111;
+  color: white;
+}
+
+.topbar div {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.topbar span {
+  color: #d0d5dd;
+}
+
+.content {
+  padding: 32px 24px;
+}
+
