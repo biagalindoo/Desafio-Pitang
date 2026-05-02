@@ -68,9 +68,11 @@ a {
   font-weight: 700;
 }
 
-.form input {
+.form input,
+.form select {
   border: 1px solid #cfd4dc;
   padding: 10px 12px;
+  background: white;
 }
 
 .feedback {
@@ -80,6 +82,10 @@ a {
 
 .error {
   color: #b42318;
+}
+
+.success {
+  color: #047857;
 }
 
 .muted {
@@ -113,4 +119,3 @@ a {
 .content {
   padding: 32px 24px;
 }
-
