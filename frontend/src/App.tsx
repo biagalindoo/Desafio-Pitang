@@ -3,6 +3,7 @@ import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { NewReembolsoPage } from "./pages/NewReembolsoPage";
 
 export function App() {
   return (
@@ -18,8 +19,15 @@ export function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/reembolsos/novo"
+        element={
+          <ProtectedRoute>
+            <NewReembolsoPage />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
-

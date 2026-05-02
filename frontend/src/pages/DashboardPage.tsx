@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuth } from "../contexts/AuthContext";
 import { formatCurrency, formatDate } from "../utils/formatters";
@@ -50,10 +51,19 @@ export function DashboardPage() {
         </button>
       </header>
       <section className="content">
-        <h1>Solicitacoes de reembolso</h1>
-        <p className="muted">
-          Usuario logado: {user?.nome} ({user?.perfil})
-        </p>
+        <div className="page-heading">
+          <div>
+            <h1>Solicitacoes de reembolso</h1>
+            <p className="muted">
+              Usuario logado: {user?.nome} ({user?.perfil})
+            </p>
+          </div>
+          {user?.perfil === "COLABORADOR" && (
+            <Link className="button-link" to="/reembolsos/novo">
+              Nova solicitacao
+            </Link>
+          )}
+        </div>
         {isLoading && <p className="state-message">Carregando solicitacoes...</p>}
         {error && <p className="feedback error">{error}</p>}
         {!isLoading && !error && reembolsos.length === 0 && (

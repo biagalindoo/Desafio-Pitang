@@ -37,6 +37,25 @@ a {
   font-weight: 700;
 }
 
+.button-link,
+.topbar-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  text-decoration: none;
+}
+
+.button-link {
+  background: #c8102e;
+  color: white;
+  padding: 10px 14px;
+}
+
+.topbar-link {
+  color: white;
+}
+
 .auth-page {
   min-height: 100vh;
   display: grid;
@@ -69,10 +88,12 @@ a {
 }
 
 .form input,
-.form select {
+.form select,
+.form textarea {
   border: 1px solid #cfd4dc;
   padding: 10px 12px;
   background: white;
+  resize: vertical;
 }
 
 .feedback {
@@ -118,6 +139,30 @@ a {
 
 .content {
   padding: 32px 24px;
+}
+
+.narrow {
+  max-width: 720px;
+}
+
+.page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.page-heading h1,
+.page-heading p {
+  margin-bottom: 0;
+}
+
+.surface-form {
+  margin-top: 24px;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e7e9ee;
 }
 
 .state-message {
