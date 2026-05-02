@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuth } from "../contexts/AuthContext";
@@ -50,7 +50,11 @@ export function ReembolsoDetailPage() {
   const [reembolso, setReembolso] = useState<ReembolsoDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingAttachment, setIsSavingAttachment] = useState(false);
   const [justificativaRejeicao, setJustificativaRejeicao] = useState("");
+  const [nomeArquivo, setNomeArquivo] = useState("");
+  const [urlArquivo, setUrlArquivo] = useState("");
+  const [tipoArquivo, setTipoArquivo] = useState("application/pdf");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -98,6 +102,31 @@ export function ReembolsoDetailPage() {
     user?.perfil === "COLABORADOR" && isOwner && reembolso?.status === "RASCUNHO";
   const canApproveOrReject = user?.perfil === "GESTOR" && reembolso?.status === "ENVIADO";
   const canPay = user?.perfil === "FINANCEIRO" && reembolso?.status === "APROVADO";
+  const canAttach = user?.perfil === "COLABORADOR" && isOwner;
+
+  async function handleAttachmentSubmit(event: FormEvent) {
+    event.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsSavingAttachment(true);
+
+    try {
+      await api.post(`/reembolsos/${id}/anexos`, {
+        nomeArquivo,
+        urlArquivo,
+        tipoArquivo
+      });
+      setSuccess("Anexo cadastrado com sucesso.");
+      setNomeArquivo("");
+      setUrlArquivo("");
+      setTipoArquivo("application/pdf");
+      await loadReembolso();
+    } catch {
+      setError("Nao foi possivel cadastrar o anexo.");
+    } finally {
+      setIsSavingAttachment(false);
+    }
+  }
 
   return (
     <main className="app-shell">
@@ -233,6 +262,42 @@ export function ReembolsoDetailPage() {
                       </li>
                     ))}
                   </ul>
+                )}
+                {canAttach && (
+                  <form onSubmit={handleAttachmentSubmit} className="form attachment-form">
+                    <label>
+                      Nome do arquivo
+                      <input
+                        type="text"
+                        value={nomeArquivo}
+                        onChange={(event) => setNomeArquivo(event.target.value)}
+                        required
+                      />
+                    </label>
+                    <label>
+                      URL do arquivo
+                      <input
+                        type="text"
+                        value={urlArquivo}
+                        onChange={(event) => setUrlArquivo(event.target.value)}
+                        required
+                      />
+                    </label>
+                    <label>
+                      Tipo
+                      <select
+                        value={tipoArquivo}
+                        onChange={(event) => setTipoArquivo(event.target.value)}
+                      >
+                        <option value="application/pdf">PDF</option>
+                        <option value="image/jpeg">JPG</option>
+                        <option value="image/png">PNG</option>
+                      </select>
+                    </label>
+                    <button type="submit" disabled={isSavingAttachment}>
+                      {isSavingAttachment ? "Salvando..." : "Adicionar anexo"}
+                    </button>
+                  </form>
                 )}
               </section>
             </div>

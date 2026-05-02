@@ -302,6 +302,12 @@ tr:last-child td {
   font-size: 13px;
 }
 
+.attachment-form {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #e7e9ee;
+}
+
 @media (max-width: 820px) {
   .page-heading {
     flex-direction: column;
