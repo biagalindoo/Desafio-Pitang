@@ -169,6 +169,30 @@ a {
   border: 1px solid #e7e9ee;
 }
 
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+  padding: 16px;
+  background: white;
+  border: 1px solid #e7e9ee;
+}
+
+.filters-bar label {
+  display: grid;
+  gap: 6px;
+  min-width: 180px;
+  color: #344054;
+  font-weight: 700;
+}
+
+.filters-bar select {
+  border: 1px solid #cfd4dc;
+  background: white;
+  padding: 10px 12px;
+}
+
 .inline-form {
   max-width: 680px;
 }

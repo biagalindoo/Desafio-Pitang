@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { DashboardPage } from "./DashboardPage";
 import { api } from "../api/client";
@@ -29,22 +30,36 @@ describe("DashboardPage", () => {
   });
 
   it("deve listar solicitacoes de reembolso", async () => {
-    apiMock.get.mockResolvedValueOnce({
-      data: [
-        {
-          id: "reembolso-1",
-          descricao: "Taxi para cliente",
-          valor: "42.5",
-          dataDespesa: "2026-04-20T00:00:00.000Z",
-          status: "RASCUNHO",
-          categoria: {
-            nome: "Transporte"
-          },
-          solicitante: {
-            nome: "Maria"
+    apiMock.get.mockImplementation((url) => {
+      if (url === "/categories") {
+        return Promise.resolve({
+          data: [
+            {
+              id: "category-1",
+              nome: "Transporte",
+              ativo: true
+            }
+          ]
+        });
+      }
+
+      return Promise.resolve({
+        data: [
+          {
+            id: "reembolso-1",
+            descricao: "Taxi para cliente",
+            valor: "42.5",
+            dataDespesa: "2026-04-20T00:00:00.000Z",
+            status: "RASCUNHO",
+            categoria: {
+              nome: "Transporte"
+            },
+            solicitante: {
+              nome: "Maria"
+            }
           }
-        }
-      ]
+        ]
+      });
     });
 
     render(
@@ -55,14 +70,20 @@ describe("DashboardPage", () => {
 
     expect(screen.getByText("Carregando solicitacoes...")).toBeInTheDocument();
     expect(await screen.findByText("Taxi para cliente")).toBeInTheDocument();
-    expect(screen.getByText("Transporte")).toBeInTheDocument();
-    expect(screen.getByText("RASCUNHO")).toBeInTheDocument();
+    expect(screen.getAllByText("Transporte").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("RASCUNHO").length).toBeGreaterThan(0);
     expect(screen.getByRole("link", { name: "Nova solicitacao" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Status")).toBeInTheDocument();
+    expect(screen.getByLabelText("Categoria")).toBeInTheDocument();
   });
 
   it("deve exibir estado vazio quando nao houver solicitacoes", async () => {
-    apiMock.get.mockResolvedValueOnce({
-      data: []
+    apiMock.get.mockImplementation((url) => {
+      if (url === "/categories") {
+        return Promise.resolve({ data: [] });
+      }
+
+      return Promise.resolve({ data: [] });
     });
 
     render(
@@ -73,5 +94,47 @@ describe("DashboardPage", () => {
 
     expect(await screen.findByText("Nenhuma solicitacao encontrada.")).toBeInTheDocument();
   });
-});
 
+  it("deve aplicar filtros de status e categoria na listagem", async () => {
+    const user = userEvent.setup();
+
+    apiMock.get.mockImplementation((url) => {
+      if (url === "/categories") {
+        return Promise.resolve({
+          data: [
+            {
+              id: "category-1",
+              nome: "Transporte",
+              ativo: true
+            }
+          ]
+        });
+      }
+
+      return Promise.resolve({ data: [] });
+    });
+
+    render(
+      <MemoryRouter>
+        <DashboardPage />
+      </MemoryRouter>
+    );
+
+    await screen.findByText("Nenhuma solicitacao encontrada.");
+
+    await user.selectOptions(screen.getByLabelText("Status"), "RASCUNHO");
+    await user.selectOptions(screen.getByLabelText("Categoria"), "category-1");
+
+    await waitFor(() => {
+      expect(apiMock.get).toHaveBeenCalledWith(
+        "/reembolsos",
+        expect.objectContaining({
+          params: {
+            status: "RASCUNHO",
+            categoriaId: "category-1"
+          }
+        })
+      );
+    });
+  });
+});
