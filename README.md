@@ -192,6 +192,26 @@ npm test -- --runInBand
 - `GESTOR`: aprova ou rejeita solicitacoes enviadas
 - `FINANCEIRO`: marca solicitacoes aprovadas como pagas
 
+## Usuarios de teste
+
+O projeto nao versiona seeds para manter o escopo obrigatorio. Para testar o
+fluxo completo, crie os usuarios abaixo pela tela de cadastro ou por `POST /users`:
+
+| Nome | E-mail | Senha | Perfil |
+| --- | --- | --- | --- |
+| Admin | admin@email.com | 123456 | ADMIN |
+| Colaborador | colaborador@email.com | 123456 | COLABORADOR |
+| Gestor | gestor@email.com | 123456 | GESTOR |
+| Financeiro | financeiro@email.com | 123456 | FINANCEIRO |
+
+Fluxo sugerido para teste manual:
+
+1. Cadastrar os quatro usuarios.
+2. Entrar como `ADMIN` e criar categorias.
+3. Entrar como `COLABORADOR`, criar uma solicitacao, anexar comprovante e enviar.
+4. Entrar como `GESTOR`, aprovar ou rejeitar a solicitacao enviada.
+5. Entrar como `FINANCEIRO` e marcar como paga quando estiver aprovada.
+
 ## Funcionalidades implementadas
 
 ### Backend
@@ -216,6 +236,15 @@ npm test -- --runInBand
 - Detalhe com dados, anexos, historico e acoes por perfil/status.
 - Gestao de categorias para admin.
 - Testes com React Testing Library para telas principais.
+
+## Pendencias conhecidas
+
+- Upload real de arquivos nao foi implementado, pois o desafio permite anexo
+  simulado no escopo obrigatorio.
+- Refresh token, Docker Compose, filtros, paginacao, dashboard com totais e seeds
+  ficaram fora do escopo atual por serem diferenciais opcionais.
+- A interface prioriza os fluxos obrigatorios e pode receber refinamentos visuais
+  adicionais depois do fluxo principal estar validado.
 
 ## Decisoes tecnicas
 
