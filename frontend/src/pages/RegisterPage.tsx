@@ -1,3 +1,4 @@
+import axios from "axios";
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
@@ -35,7 +36,17 @@ export function RegisterPage() {
       });
       setSuccess("Usuario cadastrado com sucesso.");
       setTimeout(() => navigate("/login"), 700);
-    } catch {
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (!error.response) {
+          setError("Nao foi possivel conectar com a API. Verifique se o backend esta rodando.");
+          return;
+        }
+
+        setError(error.response.data?.message ?? "Nao foi possivel cadastrar o usuario.");
+        return;
+      }
+
       setError("Nao foi possivel cadastrar o usuario.");
     } finally {
       setIsSubmitting(false);
