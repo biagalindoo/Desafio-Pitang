@@ -1,5 +1,5 @@
-
-CREATE TABLE "usuarios" (
+-- CreateTable
+CREATE TABLE IF NOT EXISTS "usuarios" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "nome" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -9,8 +9,8 @@ CREATE TABLE "usuarios" (
     "atualizadoEm" DATETIME NOT NULL
 );
 
-
-CREATE TABLE "categorias" (
+-- CreateTable
+CREATE TABLE IF NOT EXISTS "categorias" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "nome" TEXT NOT NULL,
     "ativo" BOOLEAN NOT NULL DEFAULT true,
@@ -18,7 +18,8 @@ CREATE TABLE "categorias" (
     "atualizadoEm" DATETIME NOT NULL
 );
 
-CREATE TABLE "solicitacoes_reembolso" (
+-- CreateTable
+CREATE TABLE IF NOT EXISTS "solicitacoes_reembolso" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "solicitanteId" TEXT NOT NULL,
     "categoriaId" TEXT NOT NULL,
@@ -33,7 +34,8 @@ CREATE TABLE "solicitacoes_reembolso" (
     CONSTRAINT "solicitacoes_reembolso_categoriaId_fkey" FOREIGN KEY ("categoriaId") REFERENCES "categorias" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE TABLE "anexos" (
+-- CreateTable
+CREATE TABLE IF NOT EXISTS "anexos" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "solicitacaoId" TEXT NOT NULL,
     "nomeArquivo" TEXT NOT NULL,
@@ -43,7 +45,8 @@ CREATE TABLE "anexos" (
     CONSTRAINT "anexos_solicitacaoId_fkey" FOREIGN KEY ("solicitacaoId") REFERENCES "solicitacoes_reembolso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE TABLE "historicos_solicitacao" (
+-- CreateTable
+CREATE TABLE IF NOT EXISTS "historicos_solicitacao" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "solicitacaoId" TEXT NOT NULL,
     "usuarioId" TEXT NOT NULL,
@@ -54,6 +57,8 @@ CREATE TABLE "historicos_solicitacao" (
     CONSTRAINT "historicos_solicitacao_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "usuarios" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE UNIQUE INDEX "usuarios_email_key" ON "usuarios"("email");
-CREATE UNIQUE INDEX "categorias_nome_key" ON "categorias"("nome");
+-- CreateIndex
+CREATE UNIQUE INDEX IF NOT EXISTS "usuarios_email_key" ON "usuarios"("email");
 
+-- CreateIndex
+CREATE UNIQUE INDEX IF NOT EXISTS "categorias_nome_key" ON "categorias"("nome");

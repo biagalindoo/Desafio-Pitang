@@ -64,6 +64,10 @@ npm run dev
 
 API: `http://localhost:3333`
 
+O comando `prisma db execute` prepara o banco local. Se ele ja tiver sido
+executado antes, a migration esta preparada para nao recriar tabelas existentes.
+Depois disso, para usar no dia a dia, normalmente basta rodar `npm run dev`.
+
 ### Frontend
 
 Em outro terminal:
@@ -104,6 +108,36 @@ npx prisma migrate dev
 
 Se esse comando falhar por causa do ambiente local, use o comando documentado
 com `prisma db execute`, que aplica a migration SQL versionada.
+
+## Problemas comuns no setup
+
+### `table "usuarios" already exists`
+
+Isso indica que o banco local ja foi criado antes. Atualize o projeto, rode
+novamente o comando `prisma db execute` se quiser garantir a estrutura, ou pule
+essa etapa e inicie a API com:
+
+```bash
+npm run dev
+```
+
+### `EADDRINUSE: address already in use :::3333`
+
+Isso indica que ja existe uma API rodando na porta `3333`. Verifique se ela esta
+ativa acessando:
+
+```txt
+http://localhost:3333/health
+```
+
+Se retornar status `200`, mantenha esse terminal aberto e rode apenas o frontend
+em outro terminal. Se quiser encerrar o processo antigo no Windows, descubra o
+PID e finalize manualmente:
+
+```bash
+netstat -ano | findstr :3333
+taskkill /PID <PID_ENCONTRADO> /F
+```
 
 ## Variaveis de ambiente
 
