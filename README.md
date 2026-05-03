@@ -211,6 +211,7 @@ npm test -- --runInBand
 ### Reembolsos
 
 - `GET /reembolsos` lista solicitacoes conforme perfil
+- `GET /reembolsos?status=ENVIADO&categoriaId=<id>` filtra solicitacoes por status e categoria
 - `POST /reembolsos` cria solicitacao, somente `COLABORADOR`
 - `GET /reembolsos/:id` detalha solicitacao
 - `PUT /reembolsos/:id` edita solicitacao propria em `RASCUNHO`
@@ -268,6 +269,7 @@ Fluxo sugerido para teste manual:
 - Middleware de autenticacao e autorizacao por perfil.
 - CRUD de categorias.
 - CRUD base de solicitacoes de reembolso.
+- Filtros de solicitacoes por status e categoria.
 - Envio, aprovacao, rejeicao, pagamento e cancelamento de solicitacoes.
 - Historico de auditoria.
 - Anexos simulados.
@@ -290,7 +292,7 @@ Fluxo sugerido para teste manual:
 
 - Upload real de arquivos nao foi implementado, pois o desafio permite anexo
   simulado no escopo obrigatorio.
-- Refresh token, Docker Compose, filtros, paginacao e dashboard com totais
+- Refresh token, Docker Compose, paginacao e dashboard com totais
   ficaram fora do escopo atual por serem diferenciais opcionais.
 - A interface prioriza os fluxos obrigatorios e pode receber refinamentos visuais
   adicionais depois do fluxo principal estar validado.
@@ -303,4 +305,6 @@ Fluxo sugerido para teste manual:
   e acao ficam como `String` no banco e sao validados no TypeScript/Zod.
 - Anexos foram implementados de forma simulada, conforme permitido no desafio.
 - Seeds foram adicionados como diferencial simples para facilitar a avaliacao local.
+- Filtros por status e categoria foram adicionados como diferencial sem alterar
+  as regras de permissao por perfil.
 - Todas as acoes relevantes de reembolso registram historico de auditoria.

@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { Prisma } from "@prisma/client";
 import { Request, Response } from "express";
 import { Roles, StatusReembolso } from "../constants/enums";
 import { AppError } from "../errors/app-error";
@@ -12,8 +13,15 @@ export class ReembolsosController {
       throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
     }
 
+    const where = this.buildListWhere({
+      categoriaId: String(request.query.categoriaId || ""),
+      role: user.perfil,
+      status: String(request.query.status || ""),
+      userId: user.id
+    });
+
     const solicitacoes = await prisma.solicitacaoReembolso.findMany({
-      where: this.getListWhereByRole(user.id, user.perfil),
+      where,
       include: {
         categoria: true,
         solicitante: {
@@ -512,7 +520,45 @@ export class ReembolsosController {
     return response.status(200).json(historico);
   }
 
-  private getListWhereByRole(userId: string, role: string) {
+  private buildListWhere({
+    categoriaId,
+    role,
+    status,
+    userId
+  }: {
+    categoriaId: string;
+    role: string;
+    status: string;
+    userId: string;
+  }) {
+    const filters: Prisma.SolicitacaoReembolsoWhereInput[] = [];
+    const roleWhere = this.getListWhereByRole(userId, role);
+
+    if (roleWhere) {
+      filters.push(roleWhere);
+    }
+
+    if (status) {
+      filters.push({ status });
+    }
+
+    if (categoriaId) {
+      filters.push({ categoriaId });
+    }
+
+    if (filters.length === 0) {
+      return undefined;
+    }
+
+    return {
+      AND: filters
+    };
+  }
+
+  private getListWhereByRole(
+    userId: string,
+    role: string
+  ): Prisma.SolicitacaoReembolsoWhereInput | undefined {
     if (role === Roles.ADMIN) {
       return undefined;
     }

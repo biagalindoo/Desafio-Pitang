@@ -5,6 +5,7 @@ import { authenticate } from "../middlewares/authenticate";
 import { validate } from "../middlewares/validate";
 import {
   createReembolsoSchema,
+  listReembolsosQuerySchema,
   reembolsoParamsSchema,
   rejectReembolsoSchema,
   updateReembolsoSchema
@@ -19,7 +20,11 @@ const reembolsosController = new ReembolsosController();
 
 reembolsosRoutes.use(authenticate);
 
-reembolsosRoutes.get("/", asyncHandler(reembolsosController.index.bind(reembolsosController)));
+reembolsosRoutes.get(
+  "/",
+  validate({ query: listReembolsosQuerySchema }),
+  asyncHandler(reembolsosController.index.bind(reembolsosController))
+);
 reembolsosRoutes.post(
   "/",
   validate({ body: createReembolsoSchema }),

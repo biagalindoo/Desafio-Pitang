@@ -1,7 +1,21 @@
 import { z } from "zod";
 
+const statusReembolsoValues = [
+  "RASCUNHO",
+  "ENVIADO",
+  "APROVADO",
+  "REJEITADO",
+  "PAGO",
+  "CANCELADO"
+] as const;
+
 export const reembolsoParamsSchema = z.object({
   id: z.string().min(1, "Id da solicitacao obrigatorio")
+});
+
+export const listReembolsosQuerySchema = z.object({
+  status: z.enum(statusReembolsoValues).optional(),
+  categoriaId: z.string().min(1, "Categoria obrigatoria").optional()
 });
 
 export const createReembolsoSchema = z.object({
