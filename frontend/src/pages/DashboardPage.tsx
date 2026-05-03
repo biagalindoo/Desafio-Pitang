@@ -33,12 +33,32 @@ const statusOptions = [
   "CANCELADO"
 ];
 
+const orderOptions = [
+  {
+    label: "Mais recentes",
+    value: "MAIS_RECENTES"
+  },
+  {
+    label: "Mais antigas",
+    value: "MAIS_ANTIGAS"
+  },
+  {
+    label: "Maior valor",
+    value: "MAIOR_VALOR"
+  },
+  {
+    label: "Menor valor",
+    value: "MENOR_VALOR"
+  }
+];
+
 export function DashboardPage() {
   const { user, logout } = useAuth();
   const [reembolsos, setReembolsos] = useState<Reembolso[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [orderFilter, setOrderFilter] = useState("MAIS_RECENTES");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -51,7 +71,8 @@ export function DashboardPage() {
         const response = await api.get<Reembolso[]>("/reembolsos", {
           params: {
             status: statusFilter || undefined,
-            categoriaId: categoryFilter || undefined
+            categoriaId: categoryFilter || undefined,
+            ordenacao: orderFilter
           }
         });
 
@@ -64,7 +85,7 @@ export function DashboardPage() {
     }
 
     loadReembolsos();
-  }, [categoryFilter, statusFilter]);
+  }, [categoryFilter, orderFilter, statusFilter]);
 
   useEffect(() => {
     async function loadCategories() {
@@ -138,13 +159,27 @@ export function DashboardPage() {
               ))}
             </select>
           </label>
-          {(statusFilter || categoryFilter) && (
+          <label>
+            Ordenacao
+            <select
+              value={orderFilter}
+              onChange={(event) => setOrderFilter(event.target.value)}
+            >
+              {orderOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {(statusFilter || categoryFilter || orderFilter !== "MAIS_RECENTES") && (
             <button
               className="secondary-button"
               type="button"
               onClick={() => {
                 setStatusFilter("");
                 setCategoryFilter("");
+                setOrderFilter("MAIS_RECENTES");
               }}
             >
               Limpar filtros

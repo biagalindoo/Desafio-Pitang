@@ -211,7 +211,7 @@ npm test -- --runInBand
 ### Reembolsos
 
 - `GET /reembolsos` lista solicitacoes conforme perfil
-- `GET /reembolsos?status=ENVIADO&categoriaId=<id>` filtra solicitacoes por status e categoria
+- `GET /reembolsos?status=ENVIADO&categoriaId=<id>&ordenacao=MAIOR_VALOR` filtra e ordena solicitacoes
 - `POST /reembolsos` cria solicitacao, somente `COLABORADOR`
 - `GET /reembolsos/:id` detalha solicitacao
 - `PUT /reembolsos/:id` edita solicitacao propria em `RASCUNHO`
@@ -270,6 +270,7 @@ Fluxo sugerido para teste manual:
 - CRUD de categorias.
 - CRUD base de solicitacoes de reembolso.
 - Filtros de solicitacoes por status e categoria.
+- Ordenacao de solicitacoes por data ou valor.
 - Envio, aprovacao, rejeicao, pagamento e cancelamento de solicitacoes.
 - Historico de auditoria.
 - Anexos simulados.
@@ -307,4 +308,6 @@ Fluxo sugerido para teste manual:
 - Seeds foram adicionados como diferencial simples para facilitar a avaliacao local.
 - Filtros por status e categoria foram adicionados como diferencial sem alterar
   as regras de permissao por perfil.
+- Ordenacao por data e valor foi adicionada na listagem para facilitar a analise
+  das solicitacoes.
 - Todas as acoes relevantes de reembolso registram historico de auditoria.

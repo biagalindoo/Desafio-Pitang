@@ -75,6 +75,7 @@ describe("DashboardPage", () => {
     expect(screen.getByRole("link", { name: "Nova solicitacao" })).toBeInTheDocument();
     expect(screen.getByLabelText("Status")).toBeInTheDocument();
     expect(screen.getByLabelText("Categoria")).toBeInTheDocument();
+    expect(screen.getByLabelText("Ordenacao")).toBeInTheDocument();
   });
 
   it("deve exibir estado vazio quando nao houver solicitacoes", async () => {
@@ -95,7 +96,7 @@ describe("DashboardPage", () => {
     expect(await screen.findByText("Nenhuma solicitacao encontrada.")).toBeInTheDocument();
   });
 
-  it("deve aplicar filtros de status e categoria na listagem", async () => {
+  it("deve aplicar filtros e ordenacao na listagem", async () => {
     const user = userEvent.setup();
 
     apiMock.get.mockImplementation((url) => {
@@ -124,6 +125,7 @@ describe("DashboardPage", () => {
 
     await user.selectOptions(screen.getByLabelText("Status"), "RASCUNHO");
     await user.selectOptions(screen.getByLabelText("Categoria"), "category-1");
+    await user.selectOptions(screen.getByLabelText("Ordenacao"), "MAIOR_VALOR");
 
     await waitFor(() => {
       expect(apiMock.get).toHaveBeenCalledWith(
@@ -131,7 +133,8 @@ describe("DashboardPage", () => {
         expect.objectContaining({
           params: {
             status: "RASCUNHO",
-            categoriaId: "category-1"
+            categoriaId: "category-1",
+            ordenacao: "MAIOR_VALOR"
           }
         })
       );

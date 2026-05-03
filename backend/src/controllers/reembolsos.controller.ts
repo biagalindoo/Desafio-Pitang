@@ -19,6 +19,7 @@ export class ReembolsosController {
       status: String(request.query.status || ""),
       userId: user.id
     });
+    const orderBy = this.buildListOrderBy(String(request.query.ordenacao || ""));
 
     const solicitacoes = await prisma.solicitacaoReembolso.findMany({
       where,
@@ -33,9 +34,7 @@ export class ReembolsosController {
           }
         }
       },
-      orderBy: {
-        criadoEm: "desc"
-      }
+      orderBy
     });
 
     return response.status(200).json(solicitacoes);
@@ -583,6 +582,32 @@ export class ReembolsosController {
 
     return {
       id: ""
+    };
+  }
+
+  private buildListOrderBy(
+    ordenacao: string
+  ): Prisma.SolicitacaoReembolsoOrderByWithRelationInput {
+    if (ordenacao === "MAIS_ANTIGAS") {
+      return {
+        dataDespesa: "asc"
+      };
+    }
+
+    if (ordenacao === "MAIOR_VALOR") {
+      return {
+        valor: "desc"
+      };
+    }
+
+    if (ordenacao === "MENOR_VALOR") {
+      return {
+        valor: "asc"
+      };
+    }
+
+    return {
+      dataDespesa: "desc"
     };
   }
 }
