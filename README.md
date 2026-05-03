@@ -1,13 +1,12 @@
 # Desafio Pitang - Controle de Reembolsos
 
-Projeto do desafio tecnico para controle de solicitacoes de reembolso.
+Sistema para cadastro, envio, analise, pagamento e auditoria de solicitacoes de
+reembolso.
 
-## Sobre o projeto
-
-API REST para cadastro, envio, analise, pagamento e auditoria de solicitacoes
-de reembolso. O backend implementa autenticacao com JWT, controle de permissao
-por perfil, validacoes com Zod, persistencia com Prisma e testes de integracao
-com Jest e Supertest.
+O backend implementa API REST com autenticacao JWT, controle de permissao por
+perfil, validacoes com Zod, persistencia com Prisma e testes de integracao com
+Jest e Supertest. O frontend implementa a interface em React com rotas protegidas,
+Context API para autenticacao e consumo da API com Axios.
 
 ## Stack obrigatoria
 
@@ -15,9 +14,14 @@ com Jest e Supertest.
 - Validacao: Zod
 - Autenticacao: JWT
 - Banco/ORM: Prisma
-- Datas: DayJS
+- Datas: DayJS e Intl
 - Testes backend: Jest e Supertest
-- Frontend: React, React Router, Context API e CSS/UI
+- Frontend: React com Functional Components e Hooks
+- Navegacao: React Router
+- Estado global: Context API
+- Consumo de API: Axios
+- Testes frontend: Jest e React Testing Library
+- UI: CSS proprio
 
 ## Estrutura do projeto
 
@@ -27,16 +31,25 @@ backend/
     migrations/
     schema.prisma
   src/
-    app.ts
-    server.ts
     controllers/
     middlewares/
     routes/
     schemas/
+    app.ts
+    server.ts
   tests/
+
+frontend/
+  src/
+    contexts/
+    pages/
+    routes/
+    tests/
 ```
 
-## Como rodar clonando o repositorio
+## Como rodar clonando o repositorio no Windows
+
+### Backend
 
 ```bash
 git clone <url-do-repositorio>
@@ -51,7 +64,21 @@ npm run dev
 
 API: `http://localhost:3333`
 
-No Linux/macOS, substitua o comando de copia do `.env` por:
+### Frontend
+
+Em outro terminal:
+
+```bash
+cd Desafio-Pitang
+cd frontend
+npm install
+copy .env.example .env
+npm run dev
+```
+
+Frontend: `http://localhost:5173`
+
+No Linux/macOS, substitua os comandos de copia do `.env` por:
 
 ```bash
 cp .env.example .env
@@ -59,9 +86,9 @@ cp .env.example .env
 
 ## Banco de dados
 
-O banco usado no desenvolvimento e na entrega local e SQLite via Prisma.
-Isso evita que a pessoa avaliadora precise instalar Postgres ou MySQL para testar
-o projeto. O arquivo `dev.db` e gerado localmente e nao deve ser versionado.
+O banco usado no desenvolvimento e na entrega local e SQLite via Prisma. Isso
+evita que a pessoa avaliadora precise instalar Postgres ou MySQL para testar o
+projeto. O arquivo `dev.db` e gerado localmente e nao deve ser versionado.
 
 A estrutura do banco esta versionada em:
 
@@ -75,24 +102,58 @@ Caso prefira usar o fluxo padrao do Prisma na sua maquina, tambem pode tentar:
 npx prisma migrate dev
 ```
 
-Se esse comando falhar por causa do ambiente local, use o comando documentado com
-`prisma db execute`, que aplica a migration SQL versionada.
+Se esse comando falhar por causa do ambiente local, use o comando documentado
+com `prisma db execute`, que aplica a migration SQL versionada.
+
+## Variaveis de ambiente
+
+### Backend
+
+```env
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="troque-esta-chave-em-desenvolvimento"
+PORT=3333
+```
+
+### Frontend
+
+```env
+VITE_API_URL=http://localhost:3333
+```
 
 ## Scripts do backend
 
 ```bash
-npm run dev             
-npm run build            
-npm start                
-npm test                 
-npm run prisma:generate  
+npm run dev
+npm run build
+npm start
+npm test
+npm run prisma:generate
 ```
 
-## Testes do backend
+## Scripts do frontend
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm test
+```
+
+## Testes
+
+Backend:
 
 ```bash
 cd backend
 npm test
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm test -- --runInBand
 ```
 
 ## Rotas principais
@@ -130,6 +191,31 @@ npm test
 - `COLABORADOR`: cria, edita, envia, cancela e anexa comprovantes nas proprias solicitacoes
 - `GESTOR`: aprova ou rejeita solicitacoes enviadas
 - `FINANCEIRO`: marca solicitacoes aprovadas como pagas
+
+## Funcionalidades implementadas
+
+### Backend
+
+- Cadastro e login com JWT.
+- Middleware de autenticacao e autorizacao por perfil.
+- CRUD de categorias.
+- CRUD base de solicitacoes de reembolso.
+- Envio, aprovacao, rejeicao, pagamento e cancelamento de solicitacoes.
+- Historico de auditoria.
+- Anexos simulados.
+- Tratamento padronizado de erros HTTP.
+- Testes de integracao das rotas principais.
+
+### Frontend
+
+- Login e cadastro.
+- Rotas protegidas.
+- Dashboard com listagem de solicitacoes.
+- Nova solicitacao.
+- Edicao de solicitacao em rascunho.
+- Detalhe com dados, anexos, historico e acoes por perfil/status.
+- Gestao de categorias para admin.
+- Testes com React Testing Library para telas principais.
 
 ## Decisoes tecnicas
 
