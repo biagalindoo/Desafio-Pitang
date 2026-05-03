@@ -9,6 +9,7 @@
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "tsx prisma/seed.ts",
     "prisma:studio": "prisma studio",
     "test": "jest --runInBand",
     "test:watch": "jest --watch"
@@ -39,4 +40,3 @@
     "typescript": "^5.7.2"
   }
 }
-

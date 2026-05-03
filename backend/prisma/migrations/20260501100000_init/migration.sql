@@ -1,4 +1,4 @@
--- CreateTable
+
 CREATE TABLE IF NOT EXISTS "usuarios" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "nome" TEXT NOT NULL,
@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS "usuarios" (
     "atualizadoEm" DATETIME NOT NULL
 );
 
--- CreateTable
 CREATE TABLE IF NOT EXISTS "categorias" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "nome" TEXT NOT NULL,
@@ -18,7 +17,6 @@ CREATE TABLE IF NOT EXISTS "categorias" (
     "atualizadoEm" DATETIME NOT NULL
 );
 
--- CreateTable
 CREATE TABLE IF NOT EXISTS "solicitacoes_reembolso" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "solicitanteId" TEXT NOT NULL,
@@ -34,7 +32,6 @@ CREATE TABLE IF NOT EXISTS "solicitacoes_reembolso" (
     CONSTRAINT "solicitacoes_reembolso_categoriaId_fkey" FOREIGN KEY ("categoriaId") REFERENCES "categorias" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- CreateTable
 CREATE TABLE IF NOT EXISTS "anexos" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "solicitacaoId" TEXT NOT NULL,
@@ -45,7 +42,6 @@ CREATE TABLE IF NOT EXISTS "anexos" (
     CONSTRAINT "anexos_solicitacaoId_fkey" FOREIGN KEY ("solicitacaoId") REFERENCES "solicitacoes_reembolso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- CreateTable
 CREATE TABLE IF NOT EXISTS "historicos_solicitacao" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "solicitacaoId" TEXT NOT NULL,
@@ -57,8 +53,7 @@ CREATE TABLE IF NOT EXISTS "historicos_solicitacao" (
     CONSTRAINT "historicos_solicitacao_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "usuarios" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- CreateIndex
+
 CREATE UNIQUE INDEX IF NOT EXISTS "usuarios_email_key" ON "usuarios"("email");
 
--- CreateIndex
 CREATE UNIQUE INDEX IF NOT EXISTS "categorias_nome_key" ON "categorias"("nome");

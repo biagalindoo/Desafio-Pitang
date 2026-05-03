@@ -59,6 +59,7 @@ npm install
 copy .env.example .env
 npx prisma generate
 npx prisma db execute --file prisma/migrations/20260501100000_init/migration.sql --schema prisma/schema.prisma
+npm run prisma:seed
 npm run dev
 ```
 
@@ -67,6 +68,8 @@ API: `http://localhost:3333`
 O comando `prisma db execute` prepara o banco local. Se ele ja tiver sido
 executado antes, a migration esta preparada para nao recriar tabelas existentes.
 Depois disso, para usar no dia a dia, normalmente basta rodar `npm run dev`.
+O comando `npm run prisma:seed` cria usuarios e categorias iniciais para teste.
+Ele pode ser executado mais de uma vez sem duplicar os registros.
 
 ### Frontend
 
@@ -163,6 +166,7 @@ npm run build
 npm start
 npm test
 npm run prisma:generate
+npm run prisma:seed
 ```
 
 ## Scripts do frontend
@@ -228,8 +232,15 @@ npm test -- --runInBand
 
 ## Usuarios de teste
 
-O projeto nao versiona seeds para manter o escopo obrigatorio. Para testar o
-fluxo completo, crie os usuarios abaixo pela tela de cadastro ou por `POST /users`:
+O projeto possui seed inicial para facilitar a avaliacao. Apos preparar o banco,
+rode:
+
+```bash
+cd backend
+npm run prisma:seed
+```
+
+Esse comando cria os usuarios abaixo com senha `123456`:
 
 | Nome | E-mail | Senha | Perfil |
 | --- | --- | --- | --- |
@@ -238,13 +249,16 @@ fluxo completo, crie os usuarios abaixo pela tela de cadastro ou por `POST /user
 | Gestor | gestor@email.com | 123456 | GESTOR |
 | Financeiro | financeiro@email.com | 123456 | FINANCEIRO |
 
+O seed tambem cria as categorias iniciais: `Alimentacao`, `Transporte`,
+`Hospedagem` e `Material de trabalho`.
+
 Fluxo sugerido para teste manual:
 
-1. Cadastrar os quatro usuarios.
-2. Entrar como `ADMIN` e criar categorias.
-3. Entrar como `COLABORADOR`, criar uma solicitacao, anexar comprovante e enviar.
-4. Entrar como `GESTOR`, aprovar ou rejeitar a solicitacao enviada.
-5. Entrar como `FINANCEIRO` e marcar como paga quando estiver aprovada.
+1. Rodar o seed.
+2. Entrar como `COLABORADOR`, criar uma solicitacao, anexar comprovante e enviar.
+3. Entrar como `GESTOR`, aprovar ou rejeitar a solicitacao enviada.
+4. Entrar como `FINANCEIRO` e marcar como paga quando estiver aprovada.
+5. Entrar como `ADMIN` caso queira gerenciar categorias ou usuarios.
 
 ## Funcionalidades implementadas
 
@@ -257,6 +271,7 @@ Fluxo sugerido para teste manual:
 - Envio, aprovacao, rejeicao, pagamento e cancelamento de solicitacoes.
 - Historico de auditoria.
 - Anexos simulados.
+- Seeds iniciais para usuarios e categorias de teste.
 - Tratamento padronizado de erros HTTP.
 - Testes de integracao das rotas principais.
 
@@ -275,7 +290,7 @@ Fluxo sugerido para teste manual:
 
 - Upload real de arquivos nao foi implementado, pois o desafio permite anexo
   simulado no escopo obrigatorio.
-- Refresh token, Docker Compose, filtros, paginacao, dashboard com totais e seeds
+- Refresh token, Docker Compose, filtros, paginacao e dashboard com totais
   ficaram fora do escopo atual por serem diferenciais opcionais.
 - A interface prioriza os fluxos obrigatorios e pode receber refinamentos visuais
   adicionais depois do fluxo principal estar validado.
@@ -287,4 +302,5 @@ Fluxo sugerido para teste manual:
 - Como SQLite nao suporta `enum` nativo no Prisma, os campos de perfil, status
   e acao ficam como `String` no banco e sao validados no TypeScript/Zod.
 - Anexos foram implementados de forma simulada, conforme permitido no desafio.
+- Seeds foram adicionados como diferencial simples para facilitar a avaliacao local.
 - Todas as acoes relevantes de reembolso registram historico de auditoria.
