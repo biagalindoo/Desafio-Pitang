@@ -282,7 +282,7 @@ Fluxo sugerido para teste manual:
 
 - Login e cadastro.
 - Rotas protegidas.
-- Dashboard com listagem de solicitacoes.
+- Dashboard com listagem, filtros, ordenacao e totais das solicitacoes visiveis.
 - Nova solicitacao.
 - Edicao de solicitacao em rascunho.
 - Detalhe com dados, anexos, historico e acoes por perfil/status.
@@ -293,7 +293,7 @@ Fluxo sugerido para teste manual:
 
 - Upload real de arquivos nao foi implementado, pois o desafio permite anexo
   simulado no escopo obrigatorio.
-- Refresh token, Docker Compose, paginacao e dashboard com totais
+- Refresh token, Docker Compose e paginacao
   ficaram fora do escopo atual por serem diferenciais opcionais.
 - A interface prioriza os fluxos obrigatorios e pode receber refinamentos visuais
   adicionais depois do fluxo principal estar validado.
@@ -310,4 +310,6 @@ Fluxo sugerido para teste manual:
   as regras de permissao por perfil.
 - Ordenacao por data e valor foi adicionada na listagem para facilitar a analise
   das solicitacoes.
+- O dashboard calcula totais no frontend a partir das solicitacoes visiveis,
+  acompanhando filtros e ordenacao sem criar uma rota extra.
 - Todas as acoes relevantes de reembolso registram historico de auditoria.

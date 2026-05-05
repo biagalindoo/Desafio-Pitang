@@ -61,6 +61,28 @@ export function DashboardPage() {
   const [orderFilter, setOrderFilter] = useState("MAIS_RECENTES");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const summary = reembolsos.reduce(
+    (accumulator, reembolso) => {
+      const valor = Number(reembolso.valor);
+
+      return {
+        total: accumulator.total + 1,
+        valorTotal: accumulator.valorTotal + (Number.isNaN(valor) ? 0 : valor),
+        rascunho: accumulator.rascunho + (reembolso.status === "RASCUNHO" ? 1 : 0),
+        enviado: accumulator.enviado + (reembolso.status === "ENVIADO" ? 1 : 0),
+        aprovado: accumulator.aprovado + (reembolso.status === "APROVADO" ? 1 : 0),
+        pago: accumulator.pago + (reembolso.status === "PAGO" ? 1 : 0)
+      };
+    },
+    {
+      total: 0,
+      valorTotal: 0,
+      rascunho: 0,
+      enviado: 0,
+      aprovado: 0,
+      pago: 0
+    }
+  );
 
   useEffect(() => {
     async function loadReembolsos() {
@@ -186,6 +208,34 @@ export function DashboardPage() {
             </button>
           )}
         </div>
+        {!isLoading && !error && (
+          <div className="summary-grid" aria-label="Resumo das solicitacoes">
+            <article>
+              <span>Total listado</span>
+              <strong>{summary.total}</strong>
+            </article>
+            <article>
+              <span>Valor total</span>
+              <strong>{formatCurrency(summary.valorTotal)}</strong>
+            </article>
+            <article>
+              <span>Rascunho</span>
+              <strong>{summary.rascunho}</strong>
+            </article>
+            <article>
+              <span>Enviado</span>
+              <strong>{summary.enviado}</strong>
+            </article>
+            <article>
+              <span>Aprovado</span>
+              <strong>{summary.aprovado}</strong>
+            </article>
+            <article>
+              <span>Pago</span>
+              <strong>{summary.pago}</strong>
+            </article>
+          </div>
+        )}
         {isLoading && <p className="state-message">Carregando solicitacoes...</p>}
         {error && <p className="feedback error">{error}</p>}
         {!isLoading && !error && reembolsos.length === 0 && (

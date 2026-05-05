@@ -57,6 +57,19 @@ describe("DashboardPage", () => {
             solicitante: {
               nome: "Maria"
             }
+          },
+          {
+            id: "reembolso-2",
+            descricao: "Almoco em viagem",
+            valor: "57.5",
+            dataDespesa: "2026-04-21T00:00:00.000Z",
+            status: "ENVIADO",
+            categoria: {
+              nome: "Alimentacao"
+            },
+            solicitante: {
+              nome: "Maria"
+            }
           }
         ]
       });
@@ -76,6 +89,10 @@ describe("DashboardPage", () => {
     expect(screen.getByLabelText("Status")).toBeInTheDocument();
     expect(screen.getByLabelText("Categoria")).toBeInTheDocument();
     expect(screen.getByLabelText("Ordenacao")).toBeInTheDocument();
+    expect(screen.getByText("Total listado")).toBeInTheDocument();
+    expect(screen.getByText("Valor total")).toBeInTheDocument();
+    expect(screen.getByText("R$ 100,00")).toBeInTheDocument();
+    expect(screen.getByText("Enviado")).toBeInTheDocument();
   });
 
   it("deve exibir estado vazio quando nao houver solicitacoes", async () => {

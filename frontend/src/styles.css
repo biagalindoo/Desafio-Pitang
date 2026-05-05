@@ -193,6 +193,34 @@ a {
   padding: 10px 12px;
 }
 
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.summary-grid article {
+  display: grid;
+  gap: 8px;
+  min-height: 92px;
+  padding: 16px;
+  background: white;
+  border: 1px solid #e7e9ee;
+}
+
+.summary-grid span {
+  color: #5f6673;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.summary-grid strong {
+  color: #111111;
+  font-size: 24px;
+}
+
 .inline-form {
   max-width: 680px;
 }
