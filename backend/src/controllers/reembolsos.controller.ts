@@ -13,6 +13,7 @@ export class ReembolsosController {
       throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
     }
 
+    // Junta os filtros da tela com o limite de visao de cada perfil
     const where = this.buildListWhere({
       categoriaId: String(request.query.categoriaId || ""),
       role: user.perfil,
@@ -61,6 +62,7 @@ export class ReembolsosController {
       throw new AppError("Categoria nao encontrada ou inativa");
     }
 
+    // Cria a solicitacao e o historico juntos para nao perder auditoria
     const solicitacaoCriada = await prisma.$transaction(async (transaction) => {
       const solicitacao = await transaction.solicitacaoReembolso.create({
         data: {
@@ -183,6 +185,7 @@ export class ReembolsosController {
       }
     }
 
+    // Mantem a edicao e o registro do historico na mesma transacao
     const solicitacaoAtualizada = await prisma.$transaction(async (transaction) => {
       const updated = await transaction.solicitacaoReembolso.update({
         where: { id },
@@ -240,6 +243,7 @@ export class ReembolsosController {
       throw new AppError("Apenas solicitacoes em rascunho podem ser canceladas");
     }
 
+    // Cancelamento e permitido so antes do envio para analise
     const solicitacaoCancelada = await prisma.$transaction(async (transaction) => {
       const canceled = await transaction.solicitacaoReembolso.update({
         where: { id },
@@ -294,6 +298,7 @@ export class ReembolsosController {
       throw new AppError("Apenas solicitacoes em rascunho podem ser enviadas");
     }
 
+    // Aqui a solicitacao sai do rascunho e entra na fila do gestor
     const solicitacaoEnviada = await prisma.$transaction(async (transaction) => {
       const submitted = await transaction.solicitacaoReembolso.update({
         where: { id },
@@ -344,6 +349,7 @@ export class ReembolsosController {
       throw new AppError("Apenas solicitacoes enviadas podem ser aprovadas");
     }
 
+    // Aprovacao libera a solicitacao para o financeiro pagar depois
     const solicitacaoAprovada = await prisma.$transaction(async (transaction) => {
       const approved = await transaction.solicitacaoReembolso.update({
         where: { id },
@@ -396,6 +402,7 @@ export class ReembolsosController {
       throw new AppError("Apenas solicitacoes enviadas podem ser rejeitadas");
     }
 
+    // Na rejeicao, a justificativa vira tambem a observacao do historico
     const solicitacaoRejeitada = await prisma.$transaction(async (transaction) => {
       const rejected = await transaction.solicitacaoReembolso.update({
         where: { id },
@@ -447,6 +454,7 @@ export class ReembolsosController {
       throw new AppError("Apenas solicitacoes aprovadas podem ser pagas");
     }
 
+    // Pagamento fecha o fluxo principal do reembolso
     const solicitacaoPaga = await prisma.$transaction(async (transaction) => {
       const paid = await transaction.solicitacaoReembolso.update({
         where: { id },
@@ -533,6 +541,7 @@ export class ReembolsosController {
     const filters: Prisma.SolicitacaoReembolsoWhereInput[] = [];
     const roleWhere = this.getListWhereByRole(userId, role);
 
+    // O filtro por perfil sempre entra primeiro para nao abrir dados indevidos
     if (roleWhere) {
       filters.push(roleWhere);
     }
@@ -588,6 +597,7 @@ export class ReembolsosController {
   private buildListOrderBy(
     ordenacao: string
   ): Prisma.SolicitacaoReembolsoOrderByWithRelationInput {
+    // A ordenacao por data usa a data da despesa, que e a coluna exibida na tabela
     if (ordenacao === "MAIS_ANTIGAS") {
       return {
         dataDespesa: "asc"

@@ -8,6 +8,7 @@ export function authorize(allowedRoles: Role[]) {
       throw new AppError("Usuario nao autenticado", 401, "Unauthorized");
     }
 
+    // Aqui fica a checagem de RBAC: cada rota informa quais perfis aceita
     if (!allowedRoles.includes(request.user.perfil)) {
       throw new AppError("Usuario sem permissao", 403, "Forbidden");
     }

@@ -61,6 +61,8 @@ export function DashboardPage() {
   const [orderFilter, setOrderFilter] = useState("MAIS_RECENTES");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Esses totais sempre acompanham a lista visivel no dashboard
   const summary = reembolsos.reduce(
     (accumulator, reembolso) => {
       const valor = Number(reembolso.valor);
@@ -90,6 +92,7 @@ export function DashboardPage() {
       setError("");
 
       try {
+        // A API aplica filtros e ordenacao sem quebrar a regra de perfil
         const response = await api.get<Reembolso[]>("/reembolsos", {
           params: {
             status: statusFilter || undefined,
@@ -112,6 +115,7 @@ export function DashboardPage() {
   useEffect(() => {
     async function loadCategories() {
       try {
+        // O select usa apenas categorias ativas, igual a regra de nova solicitacao
         const response = await api.get<Category[]>("/categories");
         setCategories(response.data.filter((category) => category.ativo));
       } catch {

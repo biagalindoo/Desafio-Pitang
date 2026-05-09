@@ -34,6 +34,7 @@ export function authenticate(
   try {
     const decoded = verify(token, jwtSecret) as JwtPayload;
 
+    // Deixa o id e o perfil disponiveis para controllers e permissoes
     request.user = {
       id: decoded.sub,
       perfil: decoded.perfil

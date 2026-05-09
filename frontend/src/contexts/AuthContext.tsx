@@ -42,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
+    // Recupera a sessao ao recarregar a pagina e recoloca o token no Axios
     const stored = localStorage.getItem(STORAGE_KEY);
 
     if (!stored) {
@@ -58,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response = await api.post<StoredAuth>("/auth/login", input);
     const auth = response.data;
 
+    // Depois do login, todas as chamadas privadas ja saem com Bearer token
     setUser(auth.user);
     setToken(auth.token);
     setAuthToken(auth.token);
@@ -88,4 +90,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   return useContext(AuthContext);
 }
-

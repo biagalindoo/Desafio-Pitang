@@ -47,6 +47,17 @@ frontend/
     tests/
 ```
 
+## Fluxo principal do sistema
+
+1. `ADMIN` gerencia usuarios e categorias.
+2. `COLABORADOR` cria uma solicitacao de reembolso em `RASCUNHO`.
+3. `COLABORADOR` pode editar, anexar comprovante simulado, cancelar ou enviar.
+4. Ao enviar, a solicitacao passa para `ENVIADO`.
+5. `GESTOR` aprova ou rejeita a solicitacao enviada.
+6. Se aprovada, a solicitacao passa para `APROVADO`.
+7. `FINANCEIRO` marca a solicitacao aprovada como `PAGO`.
+8. As acoes relevantes geram historico de auditoria.
+
 ## Como rodar clonando o repositorio no Windows
 
 ### Backend
@@ -270,7 +281,7 @@ Fluxo sugerido para teste manual:
 - CRUD de categorias.
 - CRUD base de solicitacoes de reembolso.
 - Filtros de solicitacoes por status e categoria.
-- Ordenacao de solicitacoes por data ou valor.
+- Ordenacao de solicitacoes por data da despesa ou valor.
 - Envio, aprovacao, rejeicao, pagamento e cancelamento de solicitacoes.
 - Historico de auditoria.
 - Anexos simulados.
@@ -298,6 +309,29 @@ Fluxo sugerido para teste manual:
 - A interface prioriza os fluxos obrigatorios e pode receber refinamentos visuais
   adicionais depois do fluxo principal estar validado.
 
+## Como validar rapidamente
+
+Depois de rodar backend, frontend e seed:
+
+1. Entrar como `ADMIN` e conferir categorias.
+2. Entrar como `COLABORADOR` e criar uma solicitacao.
+3. Ainda como `COLABORADOR`, testar editar, anexar e enviar.
+4. Entrar como `GESTOR` e aprovar ou rejeitar.
+5. Entrar como `FINANCEIRO` e pagar uma solicitacao aprovada.
+6. Entrar como `ADMIN` e testar filtros, ordenacao e totais no dashboard.
+
+Comandos de validacao automatizada:
+
+```bash
+cd backend
+npm test
+npm run build
+
+cd ../frontend
+npm test -- --runInBand
+npm run build
+```
+
 ## Decisoes tecnicas
 
 - Prisma foi escolhido em vez de Sequelize para usar schema e migrations.
@@ -308,8 +342,8 @@ Fluxo sugerido para teste manual:
 - Seeds foram adicionados como diferencial simples para facilitar a avaliacao local.
 - Filtros por status e categoria foram adicionados como diferencial sem alterar
   as regras de permissao por perfil.
-- Ordenacao por data e valor foi adicionada na listagem para facilitar a analise
-  das solicitacoes.
+- Ordenacao por data da despesa e valor foi adicionada na listagem para facilitar
+  a analise das solicitacoes.
 - O dashboard calcula totais no frontend a partir das solicitacoes visiveis,
   acompanhando filtros e ordenacao sem criar uma rota extra.
 - Todas as acoes relevantes de reembolso registram historico de auditoria.
