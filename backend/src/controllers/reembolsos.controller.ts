@@ -567,22 +567,26 @@ export class ReembolsosController {
     userId: string,
     role: string
   ): Prisma.SolicitacaoReembolsoWhereInput | undefined {
+    // ADMIN ve tudo, por isso nao precisa de filtro extra
     if (role === Roles.ADMIN) {
       return undefined;
     }
 
+    // COLABORADOR so enxerga as solicitacoes criadas por ele
     if (role === Roles.COLABORADOR) {
       return {
         solicitanteId: userId
       };
     }
 
+    // GESTOR trabalha na fila de analise, entao ve somente ENVIADO
     if (role === Roles.GESTOR) {
       return {
         status: StatusReembolso.ENVIADO
       };
     }
 
+    // FINANCEIRO entra depois da aprovacao, entao ve somente APROVADO
     if (role === Roles.FINANCEIRO) {
       return {
         status: StatusReembolso.APROVADO

@@ -45,6 +45,9 @@ frontend/
     pages/
     routes/
     tests/
+
+postman/
+  desafio-pitang.postman_collection.json
 ```
 
 ## Fluxo principal do sistema
@@ -205,6 +208,26 @@ cd frontend
 npm test -- --runInBand
 ```
 
+## Postman
+
+O projeto inclui uma collection para facilitar os testes manuais da API:
+
+```txt
+postman/desafio-pitang.postman_collection.json
+```
+
+Como usar:
+
+1. Importar a collection no Postman.
+2. Rodar backend e seed.
+3. Executar `Health`.
+4. Executar um login conforme o perfil que deseja testar.
+5. Usar as requisicoes de categorias e reembolsos.
+
+A collection possui variaveis para `baseUrl`, `token`, `categoriaId` e
+`reembolsoId`. Os logins salvam o token automaticamente e algumas requisicoes
+salvam IDs para reutilizar nas proximas chamadas.
+
 ## Rotas principais
 
 ### Autenticacao e usuarios
@@ -286,6 +309,7 @@ Fluxo sugerido para teste manual:
 - Historico de auditoria.
 - Anexos simulados.
 - Seeds iniciais para usuarios e categorias de teste.
+- Collection do Postman para testes manuais da API.
 - Tratamento padronizado de erros HTTP.
 - Testes de integracao das rotas principais.
 
@@ -340,6 +364,8 @@ npm run build
   e acao ficam como `String` no banco e sao validados no TypeScript/Zod.
 - Anexos foram implementados de forma simulada, conforme permitido no desafio.
 - Seeds foram adicionados como diferencial simples para facilitar a avaliacao local.
+- A collection do Postman foi incluida para demonstrar os testes manuais dos
+  principais endpoints da API.
 - Filtros por status e categoria foram adicionados como diferencial sem alterar
   as regras de permissao por perfil.
 - Ordenacao por data da despesa e valor foi adicionada na listagem para facilitar
